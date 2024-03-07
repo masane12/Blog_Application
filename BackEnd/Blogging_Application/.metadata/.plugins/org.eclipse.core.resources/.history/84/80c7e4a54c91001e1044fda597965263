@@ -1,0 +1,14 @@
+package com.blog.service;
+
+import com.blog.payloads.CommentDTO;
+
+public interface CommentService {
+	
+	//create comment
+	public CommentDTO createComment(CommentDTO comment);
+	//delete comment
+	//get comment
+	//get all comment
+	//update comment
+
+}

@@ -1,0 +1,227 @@
+package com.blog.service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.blog.dao.CategoryDAO;
+import com.blog.dao.PostDAO;
+import com.blog.dao.UserDao;
+import com.blog.entities.Category;
+import com.blog.entities.Post;
+import com.blog.entities.User;
+import com.blog.exceptions.ResourceNotFoundException;
+import com.blog.payloads.PostDTO;
+import com.blog.payloads.PostResponse;
+
+
+@Service
+public class PostServiceImpl implements PostService{
+
+	
+	@Autowired
+	private PostDAO postDao;
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	@Autowired
+	private CategoryDAO cateDao;
+	
+	@Autowired
+	private UserDao userDao;
+	
+	
+	// Create new Post
+	@Override
+	public PostDTO createPost(PostDTO postDto,Integer cateId, Integer userId) {
+		
+		User user = userDao.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", "userId", userId));
+		
+		Category category = cateDao.findById(cateId).orElseThrow(()->new ResourceNotFoundException("Category","CategoryId",cateId));
+		
+		Post post = mapper.map(postDto, Post.class);
+		post.setAddedDate(new Date());
+		post.setImageName("default.png");
+		post.setCategory(category);
+		post.setUser(user);
+		Post createdPost = postDao.save(post);
+		PostDTO postdto = mapper.map(createdPost, PostDTO.class);
+		return postdto;
+	}
+
+	// Update Post
+	@Override
+	public PostDTO updatePost(PostDTO postDto, Integer postId) {
+	    Post post = postDao.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post","postId",postId));
+		post.setTitle(postDto.getTitle());
+		//post.setAddedDate(postDto.getAddedDate());
+		post.setContent(postDto.getContent());
+		//post.setImageName(postDto.getImageName());
+		//post.setUser(postDto.getUser());
+		//post.setCategory(postDto.getCategory());
+		Post updatedPost = postDao.save(post);
+		PostDTO postdto = mapper.map(updatedPost, PostDTO.class);
+	    return postdto;
+	}
+	
+	
+//    // Get All Post
+//	@Override
+//	public List<PostDTO> getAllPost() {
+//		List<Post> getAllPost = postDao.findAll();
+//		List<PostDTO> getAllPostDto = getAllPost.stream().map((posts)-> 
+//		    mapper.map(posts, PostDTO.class)).collect(Collectors.toList());
+//	// map((categories) -> mapper.map(categories,CategoryDto.class)).collect(Collectors.toList());
+//		return getAllPostDto;
+//	}
+	
+	
+    // Get All Post
+	@Override
+	public PostResponse getAllPost(Integer pageNumber, Integer pageSize,String sortBy,String sortDir) {
+		
+		Sort sort = null;
+		if(sortDir.equalsIgnoreCase("asc"))
+		{
+			sort = Sort.by(sortBy).ascending();
+		}
+		else
+		{
+			sort = Sort.by(sortBy).descending();
+		}
+		
+		//It creates a 'Pageable' object 'p' using 'PageRequest.of(pageNumber, pageSize)'. 
+		//This 'Pageable' object is used to specify the page number and size for retrieving data from the database.
+		Pageable p = PageRequest.of(pageNumber, pageSize,sort);
+		
+		//It uses the 'postDao.findAll(p)' method to fetch a page of 'Post' entities based on the specified 'Pageable' object.
+		//'Page<Post>' object 'pagePost' holds the paginated result.
+		Page<Post> pagePost = postDao.findAll(p);
+		
+		//It extracts the list of 'Post' entities from 'pagePost' using 'getContent()'.
+		//The code then maps each 'Post' entity to its corresponding 'PostDTO' using the 'mapper.map()' 
+		//method and collects them into a list of 'PostDTO' named 'getAllPostDto'.
+		List<Post> allPosts = pagePost.getContent();
+		List<PostDTO> getAllPostDto = allPosts.stream().map((posts)-> 
+		    mapper.map(posts, PostDTO.class)).collect(Collectors.toList());
+	
+		
+		//Creates a new instance of 'PostResponse'.
+		//Sets the content of the response to the list of 'PostDTO' obtained earlier.
+		//Sets various pagination-related attributes in the response object:
+		             //'pageNumber', 'pageSize', 'totalPages', 'totalElements', and 'lastPage' using information retrieved from the 'Page<Post>' object ('pagePost').
+		PostResponse postResponse = new PostResponse();
+		postResponse.setContent(getAllPostDto);
+		postResponse.setPageNumber(pagePost.getNumber());
+		postResponse.setPageSize(pagePost.getSize());
+		postResponse.setTotalPages(pagePost.getTotalPages());
+		postResponse.setTotalElements(pagePost.getNumberOfElements());
+		postResponse.setLastPage(pagePost.isLast());
+		
+		//Returns the populated 'PostResponse' object containing the paginated list 
+		//of 'PostDTO' and pagination information.
+		return postResponse;
+	}
+
+	// Get post By id
+	@Override
+	public PostDTO getPostById(Integer postId) {
+		Post post = postDao.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post","postId",postId));
+		
+		PostDTO postdto = mapper.map(post, PostDTO.class);
+		return postdto;
+	}
+
+	// Get Post By User
+	@Override
+	public PostResponse getPostByuser(Integer userId,Integer pageNumber, Integer pageSize,String sortBy,String sortDir) {
+	    User user = userDao.findById(userId)
+	                       .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+	    Sort sort = null;
+		if(sortDir.equalsIgnoreCase("asc"))
+		{
+			sort = Sort.by(sortBy).ascending();
+		}
+		else
+		{
+			sort = Sort.by(sortBy).descending();
+		}
+			
+		Pageable pageable = PageRequest.of(pageNumber, pageSize,sort);
+
+	   
+	    Page<Post> pagePost = postDao.findByUser(user, pageable);
+
+	    List<PostDTO> userPostDTOs = pagePost.getContent()
+	                                        .stream()
+	                                        .map(post -> mapper.map(post, PostDTO.class))
+	                                        .collect(Collectors.toList());
+
+	    PostResponse postResponse = new PostResponse();
+	    postResponse.setContent(userPostDTOs);
+	    postResponse.setPageNumber(pagePost.getNumber());
+	    postResponse.setPageSize(pagePost.getSize());
+	    postResponse.setTotalPages(pagePost.getTotalPages());
+	    postResponse.setTotalElements((int) pagePost.getTotalElements());
+	    postResponse.setLastPage(pagePost.isLast());
+	    return postResponse;
+	}
+
+	// Get Post By Category
+	@Override
+	public PostResponse getPostByCategory(Integer categoryId,Integer pageNumber, Integer pageSize,String sortBy,String sortDir) {
+		Category cat = cateDao.findById(categoryId)
+				              .orElseThrow(()->new ResourceNotFoundException("Category", "CategoryId", categoryId));
+		Sort sort = null;
+		if(sortDir.equalsIgnoreCase("asc"))
+		{
+			sort = Sort.by(sortBy).ascending();
+		}
+		else
+		{
+			sort = Sort.by(sortBy).descending();
+		}
+			
+		Pageable pageable = PageRequest.of(pageNumber, pageSize,sort);
+			
+		Page<Post> pagePost = postDao.findByCategory(cat, pageable);
+		List<PostDTO> categoryPostDTOs = pagePost.getContent()
+                .stream()
+                .map(post -> mapper.map(post, PostDTO.class))
+                .collect(Collectors.toList());
+
+		PostResponse postResponse = new PostResponse();
+	    postResponse.setContent(categoryPostDTOs);
+	    postResponse.setPageNumber(pagePost.getNumber());
+	    postResponse.setPageSize(pagePost.getSize());
+	    postResponse.setTotalPages(pagePost.getTotalPages());
+	    postResponse.setTotalElements((int) pagePost.getTotalElements());
+	    postResponse.setLastPage(pagePost.isLast());
+	    return postResponse;
+	}
+
+	// Search Post by KeyWord 
+	@Override
+	public List<PostDTO> searchPost(String keyword) {
+		List<Post> posts = postDao.findByTitleContaining(keyword);
+		List<PostDTO> postDtos = posts.stream().map((post)->mapper.map(post, PostDTO.class)).collect(Collectors.toList());
+		return postDtos;
+	}
+
+	// Delete Post By PostID
+	@Override
+	public void deletePost(Integer postId) {
+		Post post = postDao.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","PostId",postId));
+		postDao.delete(post);
+	}
+
+}

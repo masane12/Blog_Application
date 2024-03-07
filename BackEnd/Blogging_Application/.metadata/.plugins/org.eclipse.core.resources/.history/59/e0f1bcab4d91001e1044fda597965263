@@ -1,0 +1,35 @@
+package com.blog.service;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.blog.dao.CommentDAO;
+import com.blog.dao.PostDAO;
+import com.blog.payloads.CommentDTO;
+
+public class CommentServiceImp implements CommentService{
+
+	@Autowired
+	private PostDAO postDao;
+	
+	@Autowired
+	private CommentDAO commentDao;
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	
+	
+	@Override
+	public CommentDTO createComment(CommentDTO comment, Integer PostId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteComment(Integer commentId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

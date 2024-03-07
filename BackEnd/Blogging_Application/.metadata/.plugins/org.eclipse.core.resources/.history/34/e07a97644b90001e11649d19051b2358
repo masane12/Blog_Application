@@ -1,0 +1,116 @@
+package com.blog.service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.blog.dao.CategoryDAO;
+import com.blog.dao.PostDAO;
+import com.blog.dao.UserDao;
+import com.blog.entities.Category;
+import com.blog.entities.Post;
+import com.blog.entities.User;
+import com.blog.exceptions.ResourceNotFoundException;
+import com.blog.payloads.CategoryDto;
+import com.blog.payloads.PostDTO;
+
+
+@Service
+public class PostServiceImpl implements PostService{
+
+	
+	@Autowired
+	private PostDAO postDao;
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	@Autowired
+	private CategoryDAO cateDao;
+	
+	@Autowired
+	private UserDao userDao;
+	
+	
+	
+	@Override
+	public PostDTO createPost(PostDTO postDto,Integer cateId, Integer userId) {
+		
+		User user = userDao.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", "userId", userId));
+		
+		Category category = cateDao.findById(cateId).orElseThrow(()->new ResourceNotFoundException("Category","CategoryId",cateId));
+		
+		Post post = mapper.map(postDto, Post.class);
+		post.setAddedDate(new Date());
+		post.setImageName("default.png");
+		post.setCategory(category);
+		post.setUser(user);
+		Post createdPost = postDao.save(post);
+		PostDTO postdto = mapper.map(createdPost, PostDTO.class);
+		return postdto;
+	}
+
+	@Override
+	public PostDTO updatePost(PostDTO postDto, Integer postId) {
+	    Post post = postDao.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post","postId",postId));
+		post.setTitle(postDto.getTitle());
+		post.setAddedDate(postDto.getAddedDate());
+		post.setContent(postDto.getContent());
+		post.setImageName(postDto.getImageName());
+		//post.setUser(postDto.getUser());
+		//post.setCategory(postDto.getCategory());
+		Post updatedPost = postDao.save(post);
+		PostDTO postdto = mapper.map(updatedPost, PostDTO.class);
+	    return postdto;
+	}
+
+	@Override
+	public List<PostDTO> getAllPost() {
+		List<Post> getAllPost = postDao.findAll();
+		List<PostDTO> getAllPostDto = getAllPost.stream().map((posts)-> 
+		    mapper.map(getAllPost, PostDTO.class)).collect(Collectors.toList());
+	// map((categories) -> mapper.map(categories,CategoryDto.class)).collect(Collectors.toList());
+		return getAllPostDto;
+	}
+
+	@Override
+	public PostDTO getPostById(Integer postId) {
+		Post post = postDao.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post","postId",postId));
+		
+		PostDTO postdto = mapper.map(post, PostDTO.class);
+		return postdto;
+	}
+
+	@Override
+	public List<PostDTO> getPostByuser(Integer userId) {
+		
+		return null;
+	}
+
+	@Override
+	public List<PostDTO> getPostByCategory(Integer categoryId) {
+		Category cat = cateDao.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category", "CategoryId", categoryId));
+		List<Post> posts = postDao.findByCategory(cat);
+		List<PostDTO> postdto = posts.stream().map((postDto)-> mapper.map(posts, PostDTO.class)).collect(Collectors.toList());
+		return postdto;
+	}
+
+	@Override
+	public List<PostDTO> searchPost(String keyword) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deletePost(Integer postId) {
+		Post post = postDao.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","PostId",postId));
+		postDao.delete(post);
+	}
+
+}

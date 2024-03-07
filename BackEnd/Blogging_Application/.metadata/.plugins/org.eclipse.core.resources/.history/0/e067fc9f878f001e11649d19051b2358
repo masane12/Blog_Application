@@ -1,0 +1,66 @@
+package com.blog.service;
+
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.blog.dao.CategoryDAO;
+import com.blog.entities.Category;
+import com.blog.exceptions.ResourceNotFoundException;
+import com.blog.payloads.CategoryDto;
+
+@Service
+public class CategoryServiceImpl implements CategoryService{
+	
+	@Autowired
+	private CategoryDAO categoryDao;
+	
+	@Autowired
+	private ModelMapper mapper;
+
+	@Override
+	public CategoryDto createCategory(CategoryDto cateDto) {
+		// DTO was converted into Class
+		Category cat = mapper.map(cateDto, Category.class);
+		// Category was saved in database
+		Category addedCat = categoryDao.save(cat);
+		// again Category Class was converted into DTO as return type is DTO
+		return mapper.map(addedCat, CategoryDto.class);
+	}
+
+	@Override
+	public CategoryDto updateCategory(CategoryDto cateDto, Integer cateId) {
+		//Category cat = mapper.map(cateDto, Category.class);
+		 Category cate = categoryDao.findById(cateId)
+				 .orElseThrow(()-> new ResourceNotFoundException("Category","id",cateId));
+		 cate.setCategoryTitle(cateDto.getCategoryTitle());
+		 cate.setCategorydescription(cateDto.getCategoryDescription());
+		 
+		 Category updatedCategory = categoryDao.save(cate);
+		 CategoryDto categoryToDto = mapper.map(updatedCategory, CategoryDto.class);
+		 return categoryToDto;
+	}
+
+	@Override
+	public CategoryDto getCategory(Integer cateId) {
+		Category cate = categoryDao.findById(cateId)
+				.orElseThrow(()->new ResourceNotFoundException("Category","id",cateId));
+		CategoryDto categoryToDto = mapper.map(cate, CategoryDto.class);
+		return categoryToDto;
+	}
+
+	@Override
+	public List<CategoryDto> getAllCategories() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteCategory(Integer cateId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

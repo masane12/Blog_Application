@@ -1,0 +1,34 @@
+package com.blog.payloads;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class PostDTO {
+	
+	
+	private String title;
+	
+	private String content;
+	
+	private String imageName;
+	
+	private Date addedDate;
+	
+	
+	// if we write private Category category then it go in recursion 
+	// as Post is present in Category that's we take CategoryDto as Post is not present in CategoryDto
+	private CategoryDto category;
+	
+	// if we write private User user then it go in recursion 
+	// as Post is present in User that's we take UserDTO as Post is not present in UserDTO	
+	private UserDTO user;
+	
+	
+
+}

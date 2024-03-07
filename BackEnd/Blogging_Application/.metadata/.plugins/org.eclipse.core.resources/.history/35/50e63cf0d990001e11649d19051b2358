@@ -1,0 +1,22 @@
+package com.blog.payloads;
+
+import java.util.List;
+
+// when we are sending Response to Client we send whole 
+// info like pageNumber, pageSize, totalElements, totalPages, lastPage, and content
+
+public class PostResponse {
+	
+	private List<PostDTO> content;
+	
+	private int pageNumber;
+	
+	private int pageSize;
+	
+	private int totalElements;
+	
+	private int totalPages;
+	
+	private boolean lastPage;
+
+}

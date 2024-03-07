@@ -1,0 +1,35 @@
+package com.blog.service;
+
+import java.util.List;
+
+import com.blog.entities.Category;
+import com.blog.entities.Post;
+import com.blog.entities.User;
+import com.blog.payloads.PostDTO;
+
+public interface PostService {
+	
+	//Create Post
+	public Post createPost(PostDTO postDto);
+	
+	//Update Post	
+	public Post updatePost(PostDTO postDto, Integer postId);
+	
+	//Get All Post
+	public List<Post> getAllPost();
+	
+	//Get Post By Id
+	public Post getPostById(Integer PostId);
+	
+	//Get All Post By User
+	public List<Post> getPostByuser(Integer userId);
+	
+	//Get All Post By Category
+	public List<Post> getPostByCategory(Integer categoryId);
+	
+	//Delete Post
+	public void  deletePost(Integer postId);
+	
+	
+
+}

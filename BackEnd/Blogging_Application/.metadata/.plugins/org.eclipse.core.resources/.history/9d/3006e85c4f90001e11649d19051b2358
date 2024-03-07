@@ -1,0 +1,68 @@
+package com.blog.controller;
+
+import java.util.List;
+
+import org.apache.catalina.connector.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.blog.payloads.PostDTO;
+import com.blog.service.PostService;
+
+@RestController
+@RequestMapping("/api")
+public class PostController {
+	
+	@Autowired
+	private PostService postSer;
+	
+	// create Post with User and which Category
+	@PostMapping("/user/{userId}/category/{cateId}/posts")
+	public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDto, @PathVariable Integer userId, @PathVariable Integer cateId)
+	{
+		PostDTO createPost = postSer.createPost(postDto, cateId, userId);
+		return new ResponseEntity<PostDTO>(createPost, HttpStatus.CREATED);
+	}
+	
+	//@PutMapping("/update/")
+	
+	// Get Post by Category
+	@GetMapping("/category/{categoryId}/posts")
+	public ResponseEntity<List<PostDTO>> getPostByCategory(@PathVariable Integer categoryId)
+	{
+		List<PostDTO> posts = postSer.getPostByCategory(categoryId);
+	    return new ResponseEntity<List<PostDTO>>(posts,HttpStatus.OK);
+	}
+	
+	// Get Post By User
+	@GetMapping("/user/{userId}/posts")
+	public ResponseEntity<List<PostDTO>> getPostByUser(@PathVariable Integer userId)
+	{
+		List<PostDTO> posts = postSer.getPostByCategory(userId);
+		return new ResponseEntity<List<PostDTO>>(posts,HttpStatus.OK);		
+	}
+	
+	// Get Post By Id
+	@GetMapping("/post/{postId}")
+	public ResponseEntity<PostDTO> getPostById(@PathVariable Integer postId)
+	{
+		return ResponseEntity.ok(postSer.getPostById(postId));
+	}
+	
+	// Get All Post
+	@GetMapping("/posts")
+	public ResponseEntity<List<PostDTO>> getAllPost()
+	{
+		return ResponseEntity.ok(postSer.getAllPost());
+	}
+
+}

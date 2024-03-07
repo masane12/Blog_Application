@@ -1,0 +1,89 @@
+CREATE TABLE Medicine
+(
+	[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, 
+    [Medicine] NCHAR(100) NOT NULL, 
+    [Manufacturer] NCHAR(100) NOT NULL, 
+    [UnitPrice] DECIMAL(18,2) NOT NULL, 
+    [Discount] DECIMAL(18,2) NOT NULL, 
+    [Quantity] INT NOT NULL, 
+    [Disease] VARCHAR(100) NULL, 
+    [Uses] NCHAR(200) NULL, 
+    [ExpDate] DATE NOT NULL, 
+    [ImageURL] NCHAR(100) NULL, 
+    [Status] INT NULL
+)
+
+
+
+
+CREATE TABLE [dbo].[User] (
+    [Id]        INT             IDENTITY (1, 1) NOT NULL,
+    [FirstName] VARCHAR (100)   NOT NULL,
+    [LastName]  VARCHAR (100)   NOT NULL,
+    [Password]  VARCHAR (100)   NOT NULL,
+    [Email]     VARCHAR (100)   NULL,
+    [Phone]     INT             NULL,
+    [DOB]       DATE            NULL,
+    [Address]   VARCHAR (100)   NULL,
+    [Fund]      DECIMAL (18, 2) NULL,
+    [Type]      VARCHAR (100)   NULL,
+    [Status]    INT             NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+
+CREATE TABLE [Users]
+(
+    User_Id INT IDENTITY(1,1) PRIMARY KEY, 
+    FirstName VARCHAR(100) NOT NULL, 
+    LastName VARCHAR(100) NOT NULL, 
+    Password VARCHAR(100) NOT NULL, 
+    Email VARCHAR(100), 
+    Phone INT, 
+    DOB DATE, 
+    Address VARCHAR(100), 
+    Fund DECIMAL(18,2), 
+    [Type] VARCHAR(100),
+    [Status] INT 
+);
+
+
+
+CREATE TABLE OrderItems
+(
+	[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, 
+    [OrderId] INT NOT NULL, 
+    [MedicineId] INT NOT NULL, 
+    [UnitPrice] DECIMAL(18, 2) NULL, 
+    [Discount] DECIMAL(18, 2) NULL, 
+    [Quantity] INT NULL, 
+    [TotalPrice] DECIMAL(18, 2) NULL
+)
+
+
+CREATE TABLE Cart
+(
+	[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+      [UserId] int NOT NULL,
+    [MedicineId] int NOT NULL, 
+    [UnitPrice] DECIMAL(18,2) NOT NULL, 
+    [Discount] DECIMAL(18,2) NOT NULL,  
+    [Quantity] INT NULL, 
+    [TotalPrice] DECIMAL(18, 2) NULL
+    
+)
+
+
+
+CREATE TABLE Order
+(
+	[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, 
+    [UserId] INT NOT NULL, 
+    [OrderNo] VARCHAR(100), 
+    [OrderTotal] DECIMAL(18, 2) NULL, 
+    [OrderStatus] VARCHAR(100) 
+)
+
+
+
+Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=Eveready;Integrated Security=True

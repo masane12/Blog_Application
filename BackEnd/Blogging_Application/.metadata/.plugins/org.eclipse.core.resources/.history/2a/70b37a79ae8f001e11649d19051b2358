@@ -1,0 +1,49 @@
+package com.blog.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.blog.payloads.ApiResponse;
+import com.blog.payloads.CategoryDto;
+import com.blog.service.CategoryService;
+
+@RestController
+@RequestMapping("/api/categories")
+public class CategoryController {
+	
+	@Autowired
+	private CategoryService cateService;
+	
+	//PostMapping(create)
+	@PostMapping("/")
+	public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto cateDto)
+	{
+	     CategoryDto createCategory = cateService.createCategory(cateDto);
+	     return new ResponseEntity<>(createCategory,HttpStatus.CREATED);
+	     
+	}
+	
+	//PutMapping(update)
+	@PutMapping("/update/id")
+	public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto cateDto @PathVariable id)
+	{
+		CategoryDto updatedCategory = cateService.updateCategory(cateDto, id);
+		return new ResponseEntity.ok(updatedCategory);
+	}
+	//DeleteMapper(delete)
+	//GetMapping(getAllCategories)
+	//GetMapping(getCategory)
+	
+	
+	
+	
+	
+
+}

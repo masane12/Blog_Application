@@ -1,0 +1,75 @@
+package com.blog.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.blog.dao.UserDao;
+import com.blog.entities.User;
+import com.blog.exceptions.ResourceNotFoundException;
+import com.blog.payloads.UserDTO;
+
+public class UserServiceImpl implements UserService {
+	
+	@Autowired
+	private UserDao userDao;
+	
+
+	@Override
+	public UserDTO createUser(UserDTO userdto) {
+		User user = dtoToUser(userdto);
+		User savedUser = userDao.save(user);
+		return userToDto(savedUser);
+	}
+
+	@Override
+	public UserDTO updateUser(UserDTO userdto, Integer userId) {
+		User user = userDao.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User","id",userId));
+		
+		return null;
+	}
+
+	
+	@Override
+	public UserDTO getUserById(Integer userId) {
+		 userDao.findById(userId);
+		 return null;
+		 
+	}
+
+	@Override
+	public List<UserDTO> getAllUsers() {
+		userDao.findAll();
+		return null;
+	}
+
+	@Override
+	public void deleteUser(Integer userId) {
+		userDao.deleteById(userId);
+
+	}
+
+	
+	public User dtoToUser(UserDTO userDto)
+	{
+		User user = new User();
+		user.setId(userDto.getId());
+		user.setName(userDto.getName());
+		user.setEmail(userDto.getEmail());
+		user.setPassword(userDto.getPassword());
+		user.setAbout(userDto.getAbout());
+		return user;
+	}
+	
+	public UserDTO userToDto(User user)
+	{
+		UserDTO userDto = new UserDTO();
+		userDto.setId(user.getId());
+		userDto.setName(user.getName());
+		userDto.setEmail(user.getEmail());
+		userDto.setPassword(user.getPassword());
+		userDto.setAbout(user.getAbout());
+		return userDto;
+	}
+}

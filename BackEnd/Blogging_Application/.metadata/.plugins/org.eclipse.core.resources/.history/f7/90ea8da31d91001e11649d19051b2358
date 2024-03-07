@@ -1,0 +1,9 @@
+package com.blog.payloads;
+
+public class FileResponse {
+	
+	String fileName;
+	
+	String message;
+
+}

@@ -1,0 +1,33 @@
+package com.blog.payloads;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+// DTO class is used to access data fields of User class 
+// if we don't want all fields of User Entity class then we can create DTO of user 
+// by this we are not directly exposing User Entity to APIs
+// Entity is to only connect with Database then
+@NoArgsConstructor
+@Getter
+@Setter
+public class UserDTO {
+	
+	private int id;
+	
+	@NotNull
+	private String name;
+	
+	@Email
+	private String email;
+	
+	@NotNull
+	private String  password;
+	
+	@NotNull
+	private String about;
+	 
+}

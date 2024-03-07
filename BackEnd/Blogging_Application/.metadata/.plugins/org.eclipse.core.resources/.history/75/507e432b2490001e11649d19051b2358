@@ -1,0 +1,88 @@
+package com.blog.service;
+
+import java.util.Date;
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.blog.dao.CategoryDAO;
+import com.blog.dao.PostDAO;
+import com.blog.dao.UserDao;
+import com.blog.entities.Post;
+import com.blog.payloads.PostDTO;
+
+
+@Service
+public class PostServiceImpl implements PostService{
+
+	
+	@Autowired
+	private PostDAO postDao;
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	@Autowired
+	private CategoryDAO cateDao;
+	
+	@Autowired
+	private UserDao userDao;
+	
+	
+	
+	@Override
+	public Post createPost(PostDTO postDto,Integer cateId, Integer userId) {
+		Post post = mapper.map(postDto, Post.class);
+		post.setAddedDate(new Date());
+		post.setImageName("default.png");
+		post.setCategory(cateId);
+		Post createdPost = postDao.save(post);
+		PostDTO postdto = mapper.map(createdPost, PostDTO.class);
+		return createdPost;
+	}
+
+	@Override
+	public Post updatePost(PostDTO postDto, Integer postId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Post> getAllPost() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Post getPostById(Integer PostId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Post> getPostByuser(Integer userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Post> getPostByCategory(Integer categoryId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Post> searchPost(String keyword) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deletePost(Integer postId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

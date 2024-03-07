@@ -1,0 +1,108 @@
+Post table SQL Quries
+
+Hibernate: create table post (post_id integer not null auto_increment, added_date datetime(6), comment_id integer, post_content varchar(255) not null, image_name varchar(255), post_title varchar(100) not null, category_category_id integer, user_id integer, primary key (post_id)) engine=InnoDB
+Hibernate: alter table post add constraint FKr7g7up9a3358c3sycj8ihw41v foreign key (category_category_id) references categories (category_id)
+Hibernate: alter table post add constraint FK7ky67sgi7k0ayf22652f7763r foreign key (user_id) references users (id)
+
+
+Data of User
+{
+        "id": 1,
+        "name": "Harshada",
+        "email": "harshadamasane65@gmail.com",
+        "password": "1234",
+        "about": "I will get what I want and it's true"
+    },
+    {
+        "id": 3,
+        "name": "Nikita",
+        "email": "nikitamasane12@gmail.com",
+        "password": "niki",
+        "about": "Do your best"
+    },
+    {
+        "id": 54,
+        "name": "Yogesh",
+        "email": "yogesh@gmail.com",
+        "password": "yogyaa",
+        "about": "Chemical Engineer"
+    },
+    {
+        "id": 55,
+        "name": "Omprakash",
+        "email": "om0304@gmail.com",
+        "password": "om",
+        "about": "IAS Omprakash"
+    },
+    {
+        "id": 102,
+        "name": "Ravi Shastri",
+        "email": "ravi@gmail.com",
+        "password": "ravi",
+        "about": "Indian Cricket Team Coach"
+    },
+    {
+        "id": 152,
+        "name": "Bushra",
+        "email": "bushra@gmail.com",
+        "password": "8907",
+        "about": "Antre ki Bushra"
+    },
+    {
+        "id": 203,
+        "name": "Sakshi",
+        "email": "sakshi12@gmail.com",
+        "password": "sakshi@123",
+        "about": "Sakshi pata nahi kisaki kisiki toh hogi"
+    }
+
+
+
+
+// Category Data
+{
+        "categoryId": 1,
+        "categoryTitle": "Education System",
+        "categoryDescription": "Poor Education System of India"
+    },
+    {
+        "categoryId": 2,
+        "categoryTitle": "Poem",
+        "categoryDescription": "Poem realated to any Topic"
+    },
+    {
+        "categoryId": 3,
+        "categoryTitle": "International Relations",
+        "categoryDescription": "Russia-Ukraine War"
+    },
+    {
+        "categoryId": 4,
+        "categoryTitle": "Politics In India",
+        "categoryDescription": "How will win election of 2024"
+    },
+    {
+        "categoryId": 5,
+        "categoryTitle": "Bollywood",
+        "categoryDescription": "Why are bollywood moives failing at BoxOffice"
+    },
+    {
+        "categoryId": 7,
+        "categoryTitle": "K-POP",
+        "categoryDescription": "Toxic K-POP taking over world"
+    }
+
+
+
+
+PAGE SIZE AND PAGE NUMBER(SORTING AND PAGINATION)
+
+-> pageSize and pageNumber
+-> sorting by any one field
+http://localhost:9090/posts?pageSize=5&pageNo=2&sortBy=title
+
+
+
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency> 
